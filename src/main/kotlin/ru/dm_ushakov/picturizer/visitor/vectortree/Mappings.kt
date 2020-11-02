@@ -1,0 +1,98 @@
+package ru.dm_ushakov.picturizer.visitor.vectortree
+
+import ru.dm_ushakov.picturizer.model.vectortree.*
+import ru.dm_ushakov.picturizer.utils.*
+
+object Mappings {
+    fun getMapperToScalar(mapping:(VectorValue) -> Double,booleanMapping:(VectorBooleanValue) -> Boolean) = walker {
+        mapOperand = {
+            when (it) {
+                is VectorValue -> ScalarValue(mapping(it))
+                is VectorBooleanValue -> ScalarBooleanVector(booleanMapping(it))
+                else -> it
+            }
+        }
+    }
+
+    val toRedScalar = getMapperToScalar({ it.red }, { it.red })
+    val toGreenScalar = getMapperToScalar({ it.green },{ it.green })
+    val toBlueScalar = getMapperToScalar({ it.blue },{ it.blue })
+
+    val wipeMultiplicationZeroes = walker {
+        mapOperator = {
+            if (it is BinaryVectorOperator) {
+                if (it.operation == BinaryVectorOperation.Mul) {
+                    if (it.leftOperand.isZero || it.rightOperand.isZero) ScalarValue(0.0)
+                    else it
+                } else if (it.operation == BinaryVectorOperation.Div) {
+                    if (it.leftOperand.isZero) ScalarValue(0.0)
+                    else it
+                } else it
+            } else it
+        }
+    }
+
+    val wipeAdditionZeroes = walker {
+        mapOperator = {
+            if (it is BinaryVectorOperator) {
+                if (it.operation == BinaryVectorOperation.Add) {
+                    when {
+                        it.leftOperand.isZero && it.rightOperand.isZero -> ScalarValue(0.0)
+                        it.leftOperand.isZero -> it.rightOperand
+                        it.rightOperand.isZero -> it.leftOperand
+                        else -> it
+                    }
+                } else if(it.operation == BinaryVectorOperation.Sub) {
+                    val right = it.rightOperand
+                    val left = it.leftOperand
+                    when {
+                        left.isZero && right.isZero -> ScalarValue(0.0)
+                        right.isZero -> left
+                        left.isZero && right is ScalarValue -> right.negative
+                        else -> it
+                    }
+                } else it
+            } else it
+        }
+    }
+
+    val wipeMultiplicationOnes = walker {
+        mapOperator = {
+            if (it is BinaryVectorOperator) {
+                if (it.operation == BinaryVectorOperation.Mul) {
+                    when {
+                        it.leftOperand.isOne -> it.rightOperand
+                        it.rightOperand.isOne -> it.leftOperand
+                        else -> it
+                    }
+                } else it
+            } else it
+        }
+    }
+
+    val methodInvokeReducer = MethodInvokeReducer().apply {
+        registerMethod("java/lang/Math","max","(DD)D")
+        registerMethod("java/lang/Math","min","(DD)D")
+    }
+
+    val replaceRGBFunctionToOperator = walker {
+        mapOperator = {
+            if (it is VectorFunctionCall && it.functionName=="rgb") RGBVectorFunctionOperator.fromVectorFunctionCall(it)
+            else it
+        }
+    }
+
+    fun getMapperFromRGB(mapper:(RGBVectorFunctionOperator) -> VectorOperand) = walker {
+        mapOperator = { if (it is RGBVectorFunctionOperator) mapper(it) else it }
+    }
+
+    val extractRGBRed = getMapperFromRGB { it.red }
+    val extractRGBGreen = getMapperFromRGB { it.green }
+    val extractRGBBlue = getMapperFromRGB { it.blue }
+
+    val convertToRedScalarTree = opVisitorChain(replaceRGBFunctionToOperator, extractRGBRed, toRedScalar)
+    val convertToGreenScalarTree = opVisitorChain(replaceRGBFunctionToOperator, extractRGBGreen, toGreenScalar)
+    val convertToBlueScalarTree = opVisitorChain(replaceRGBFunctionToOperator, extractRGBBlue, toBlueScalar)
+
+    val reduceOperatorsTree = opVisitorChain(wipeMultiplicationZeroes, wipeAdditionZeroes, wipeMultiplicationOnes, repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer), methodInvokeReducer)
+}
