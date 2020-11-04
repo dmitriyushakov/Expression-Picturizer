@@ -127,6 +127,7 @@ object Mappings {
             wipeMultiplicationOnes,
             repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),
             replaceLogicOperatorsForReal,
+            BooleanMulReducer,
             methodInvokeReducer
     )
 }
