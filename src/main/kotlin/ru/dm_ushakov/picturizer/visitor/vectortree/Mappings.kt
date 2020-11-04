@@ -84,6 +84,18 @@ object Mappings {
         }
     }
 
+    val reduceSimpleTernaryOperator = walker {
+        mapOperator = {
+            if (it is TernaryVectorOperator) {
+                val cond = it.condition
+                if (cond is ScalarBooleanVector) {
+                    if (cond.value) it.trueExpression
+                    else it.falseExpression
+                } else it
+            } else it
+        }
+    }
+
     val methodInvokeReducer = MethodInvokeReducer().apply {
         registerMethod("java/lang/Math","max","(DD)D")
         registerMethod("java/lang/Math","min","(DD)D")
@@ -128,6 +140,7 @@ object Mappings {
             repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),
             replaceLogicOperatorsForReal,
             BooleanMulReducer,
+            reduceSimpleTernaryOperator,
             methodInvokeReducer
     )
 }
