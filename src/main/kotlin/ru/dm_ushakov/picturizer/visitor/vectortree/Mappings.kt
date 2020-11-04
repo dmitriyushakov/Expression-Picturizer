@@ -70,6 +70,20 @@ object Mappings {
         }
     }
 
+    val replaceLogicOperatorsForReal = walker {
+        mapOperator = {
+            if (it is BinaryBooleanVectorOperator) {
+                if (it.leftOperand.resultType == ResultType.RealNumbers && it.rightOperand.resultType == ResultType.RealNumbers) {
+                    val functionName = when(it.operation) {
+                        BinaryBooleanVectorOperation.And -> "min"
+                        BinaryBooleanVectorOperation.Or -> "max"
+                    }
+                    VectorFunctionCall(functionName,it.operands)
+                } else it
+            } else it
+        }
+    }
+
     val methodInvokeReducer = MethodInvokeReducer().apply {
         registerMethod("java/lang/Math","max","(DD)D")
         registerMethod("java/lang/Math","min","(DD)D")
@@ -107,5 +121,12 @@ object Mappings {
     val convertToBlueScalarTree = opVisitorChain(extractRGBBlue, toBlueScalar)
 
     val reduceRGBOperatorsTree = opVisitorChain(vectorVariableAccessReducer, replaceRGBFunctionToOperator)
-    val reduceOperatorsTree = opVisitorChain(wipeMultiplicationZeroes, wipeAdditionZeroes, wipeMultiplicationOnes, repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer), methodInvokeReducer)
+    val reduceOperatorsTree = opVisitorChain(
+            wipeMultiplicationZeroes,
+            wipeAdditionZeroes,
+            wipeMultiplicationOnes,
+            repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),
+            replaceLogicOperatorsForReal,
+            methodInvokeReducer
+    )
 }
