@@ -2,7 +2,6 @@ package ru.dm_ushakov.picturizer.visitor.vectortree
 
 import ru.dm_ushakov.picturizer.model.vectortree.VectorOperand
 import ru.dm_ushakov.picturizer.model.vectortree.VectorOperator
-import ru.dm_ushakov.picturizer.utils.printDebugInformation
 
 class RepeatableVisitorChain(val visitors: List<CheckableVectorOperatorVisitor>):AbstractVectorOperatorVisitor() {
     override fun visit(operator: VectorOperator): VectorOperand {

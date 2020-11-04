@@ -16,8 +16,6 @@ object SubAddReducer:AbstractVectorOperatorVisitor(),CheckableVectorOperatorVisi
         return operator.replaceOperands(newOperands)
     }
 
-    private fun visitIfOperator(op: VectorOperand) = if (op is VectorOperator) visit(op) else op
-
     override fun checkFor(operator: VectorOperator): Boolean {
         if (operator is BinaryVectorOperator && (operator.operation == Add || operator.operation == Sub)) {
             val cnt = operator.collectOperandsAndOperations().count { it.second is VectorValue || it.second is ScalarValue }

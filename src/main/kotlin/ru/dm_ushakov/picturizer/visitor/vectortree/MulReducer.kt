@@ -16,8 +16,6 @@ object MulReducer:AbstractVectorOperatorVisitor(),CheckableVectorOperatorVisitor
         return operator.replaceOperands(newOperands)
     }
 
-    private fun visitIfOperator(op: VectorOperand) = if (op is VectorOperator) visit(op) else op
-
     override fun checkFor(operator: VectorOperator): Boolean {
         if(operator is BinaryVectorOperator && operator.operation == BinaryVectorOperation.Mul) {
             val cnt = operator.collectOperands().count { it is VectorValue || it is ScalarValue }

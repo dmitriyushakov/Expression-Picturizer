@@ -32,6 +32,4 @@ object DivReducer:AbstractVectorOperatorVisitor(),CheckableVectorOperatorVisitor
 
         return operator.operands.mapNotNull { it as? VectorOperator }.any { checkFor(it) }
     }
-
-    private fun visitIfOperator(op: VectorOperand) = if (op is VectorOperator) MulReducer.visit(op) else op
 }

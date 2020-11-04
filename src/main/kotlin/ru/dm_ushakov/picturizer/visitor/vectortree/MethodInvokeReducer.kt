@@ -28,8 +28,6 @@ class MethodInvokeReducer:AbstractVectorOperatorVisitor() {
         return operator.replaceOperands(operands)
     }
 
-    private fun visitIfOperator(operand:VectorOperand) = if (operand is VectorOperator) visit(operand) else operand
-
     private fun registerMethod(aliasName:String,owner:String,name:String,descriptor:String,operandsCount: Int) {
         registeredMethods.add(MethodInformation(aliasName,owner,name,descriptor,operandsCount))
     }

@@ -75,6 +75,18 @@ object Mappings {
         registerMethod("java/lang/Math","min","(DD)D")
     }
 
+    val vectorVariableAccessReducer = VectorVariableAccessReducer().apply {
+        addVariable("pi",Math.PI)
+        addVariable("e",Math.E)
+        addVariable("x",MethodArgumentVariableAccess(MethodArgumentVariableType.X))
+        addVariable("y",MethodArgumentVariableAccess(MethodArgumentVariableType.Y))
+        addVariable("a",MethodArgumentVariableAccess(MethodArgumentVariableType.Angle))
+        addVariable("r",MethodArgumentVariableAccess(MethodArgumentVariableType.Radius))
+        addVariable("red",VectorBooleanValue(true,false,false))
+        addVariable("green",VectorBooleanValue(false,true,false))
+        addVariable("blue",VectorBooleanValue(false,false,true))
+    }
+
     val replaceRGBFunctionToOperator = walker {
         mapOperator = {
             if (it is VectorFunctionCall && it.functionName=="rgb") RGBVectorFunctionOperator.fromVectorFunctionCall(it)
@@ -90,9 +102,10 @@ object Mappings {
     val extractRGBGreen = getMapperFromRGB { it.green }
     val extractRGBBlue = getMapperFromRGB { it.blue }
 
-    val convertToRedScalarTree = opVisitorChain(replaceRGBFunctionToOperator, extractRGBRed, toRedScalar)
-    val convertToGreenScalarTree = opVisitorChain(replaceRGBFunctionToOperator, extractRGBGreen, toGreenScalar)
-    val convertToBlueScalarTree = opVisitorChain(replaceRGBFunctionToOperator, extractRGBBlue, toBlueScalar)
+    val convertToRedScalarTree = opVisitorChain(extractRGBRed, toRedScalar)
+    val convertToGreenScalarTree = opVisitorChain(extractRGBGreen, toGreenScalar)
+    val convertToBlueScalarTree = opVisitorChain(extractRGBBlue, toBlueScalar)
 
+    val reduceRGBOperatorsTree = opVisitorChain(vectorVariableAccessReducer, replaceRGBFunctionToOperator)
     val reduceOperatorsTree = opVisitorChain(wipeMultiplicationZeroes, wipeAdditionZeroes, wipeMultiplicationOnes, repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer), methodInvokeReducer)
 }

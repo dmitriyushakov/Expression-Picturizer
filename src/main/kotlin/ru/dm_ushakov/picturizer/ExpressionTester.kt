@@ -14,6 +14,7 @@ fun main() {
         val expression = sc.nextLine()
         println()
         var parsedExpression = Parser.parseExpression(expression)
+        parsedExpression = Mappings.reduceRGBOperatorsTree(parsedExpression)
         var redScalarTree = Mappings.convertToRedScalarTree(parsedExpression)
         println("Red tree:")
         redScalarTree = Mappings.reduceOperatorsTree(redScalarTree)

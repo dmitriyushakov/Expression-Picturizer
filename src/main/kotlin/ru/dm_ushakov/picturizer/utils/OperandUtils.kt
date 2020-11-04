@@ -17,7 +17,7 @@ val VectorOperand.isOne:Boolean get() = isEqualTo(1.0)
 val ScalarValue.negative:ScalarValue get() = ScalarValue(-value)
 
 operator fun ((VectorOperator) -> VectorOperand).invoke(op:VectorOperand):VectorOperand =
-    if (op is VectorOperator) invoke(op) else op
+    if (op is VectorOperator) invoke(op) else invoke(op.identity).identityValue
 
 fun BinaryVectorOperator.collectOperands():List<VectorOperand> {
     val operandsList = mutableListOf<VectorOperand>()
@@ -33,3 +33,6 @@ private fun collectOperands(operation: BinaryVectorOperation, op: BinaryVectorOp
         }
     } else operandsList.add(op)
 }
+
+val VectorOperand.identity get() = IdentityOperator(this)
+val VectorOperand.identityValue:VectorOperand get() = if (this is IdentityOperator) operand.identityValue else this
