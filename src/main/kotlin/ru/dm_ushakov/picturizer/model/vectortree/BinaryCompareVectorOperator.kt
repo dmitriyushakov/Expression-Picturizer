@@ -13,6 +13,8 @@ class BinaryCompareVectorOperator(
         val (left,right) = other
         return BinaryCompareVectorOperator(operation,left,right)
     }
+
+    override val resultType get() = ResultType.Boolean
     val not:BinaryCompareVectorOperator get() = BinaryCompareVectorOperator(operation.not,leftOperand,rightOperand)
     override fun toString() = "BinaryCompareVectorOperator ($operation)"
 }

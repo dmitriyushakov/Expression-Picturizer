@@ -8,5 +8,8 @@ class MethodInvoke (val owner:String, val name:String, val descriptor:String,
             return MethodInvoke(owner, name, descriptor, other)
         } else error("Replacing operands should have same count!")
     }
+
+    override val resultType get() = ResultType.RealNumbers
+
     override fun toString() = "MethodInvoke owner=$owner, name=$name, desc=$descriptor"
 }

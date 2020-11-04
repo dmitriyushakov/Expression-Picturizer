@@ -15,6 +15,8 @@ class BinaryBooleanVectorOperator(
         return BinaryBooleanVectorOperator(operation,left,right)
     }
 
+    override val resultType get() = ResultType.Boolean
+
     val not:BinaryBooleanVectorOperator get() {
         val otherOperation = when(operation) {
             And -> Or

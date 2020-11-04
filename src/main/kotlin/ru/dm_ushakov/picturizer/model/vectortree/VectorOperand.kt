@@ -1,3 +1,5 @@
 package ru.dm_ushakov.picturizer.model.vectortree
 
-interface VectorOperand
+interface VectorOperand {
+    val resultType: ResultType
+}

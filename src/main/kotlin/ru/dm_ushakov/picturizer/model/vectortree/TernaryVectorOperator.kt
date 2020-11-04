@@ -10,5 +10,8 @@ class TernaryVectorOperator(val condition: VectorOperand,val trueExpression:Vect
         return TernaryVectorOperator(condition, trueExpression, falseExpression)
     }
 
+    override val resultType get() = if (trueExpression.resultType == falseExpression.resultType) trueExpression.resultType
+        else ResultType.Undefined
+
     override fun toString() = "TernaryVectorOperator"
 }

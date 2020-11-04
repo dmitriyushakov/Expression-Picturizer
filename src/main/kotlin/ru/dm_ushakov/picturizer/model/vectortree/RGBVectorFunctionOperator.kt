@@ -8,6 +8,10 @@ class RGBVectorFunctionOperator(val red:VectorOperand, val green:VectorOperand, 
         val (red,green,blue) = other
         return RGBVectorFunctionOperator(red, green, blue)
     }
+
+    override val resultType get() = if (red.resultType == green.resultType && red.resultType == blue.resultType) red.resultType
+        else ResultType.Undefined
+
     companion object {
         fun fromVectorFunctionCall(call: VectorFunctionCall):RGBVectorFunctionOperator {
             val operands = call.operands

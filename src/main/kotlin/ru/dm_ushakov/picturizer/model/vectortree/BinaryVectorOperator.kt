@@ -13,5 +13,8 @@ class BinaryVectorOperator(
         val (left,right) = other
         return BinaryVectorOperator(operation,left,right)
     }
+
+    override val resultType get() = ResultType.RealNumbers
+
     override fun toString() = "BinaryVectorOperator ($operation)"
 }
