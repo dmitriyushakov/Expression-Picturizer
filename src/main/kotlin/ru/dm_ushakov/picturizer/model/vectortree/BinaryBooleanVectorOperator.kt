@@ -15,6 +15,12 @@ class BinaryBooleanVectorOperator(
         return BinaryBooleanVectorOperator(operation,left,right)
     }
 
+    override fun validateOperandsTypes() {
+        if(leftOperand.resultType != ResultType.Boolean || rightOperand.resultType != ResultType.Boolean){
+            compilationError("Binary boolean operator not allow not boolean operands!")
+        }
+    }
+
     override val resultType get() = ResultType.Boolean
 
     val not:BinaryBooleanVectorOperator get() {

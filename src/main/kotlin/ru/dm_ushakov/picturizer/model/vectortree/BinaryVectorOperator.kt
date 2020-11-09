@@ -14,6 +14,11 @@ class BinaryVectorOperator(
         return BinaryVectorOperator(operation,left,right)
     }
 
+    override fun validateOperandsTypes() {
+        if (leftOperand.resultType!=ResultType.RealNumbers || rightOperand.resultType!=ResultType.RealNumbers){
+            compilationError("Binary operator not allow any not real operands!")
+        }
+    }
     override val resultType get() = ResultType.RealNumbers
 
     override fun toString() = "BinaryVectorOperator ($operation)"

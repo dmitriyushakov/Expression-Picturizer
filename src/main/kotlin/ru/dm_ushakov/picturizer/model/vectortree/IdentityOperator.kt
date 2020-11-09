@@ -7,4 +7,8 @@ class IdentityOperator(val operand: VectorOperand):VectorOperator {
         if (other.size != 1) error("Identity operator should have 1 value!")
         else return IdentityOperator(other[0])
     }
+
+    override fun validateOperandsTypes() {
+
+    }
 }

@@ -137,10 +137,11 @@ object Mappings {
             wipeMultiplicationZeroes,
             wipeAdditionZeroes,
             wipeMultiplicationOnes,
-            repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),
             replaceLogicOperatorsForReal,
             BooleanMulReducer,
             reduceSimpleTernaryOperator,
-            methodInvokeReducer
+            repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),
+            methodInvokeReducer,
+            ValidationVisitor
     )
 }

@@ -14,6 +14,12 @@ class BinaryCompareVectorOperator(
         return BinaryCompareVectorOperator(operation,left,right)
     }
 
+    override fun validateOperandsTypes() {
+        if (leftOperand.resultType != ResultType.RealNumbers || rightOperand.resultType != ResultType.RealNumbers) {
+            compilationError("Compare operator not allow not real numbers as any operand.")
+        }
+    }
+
     override val resultType get() = ResultType.Boolean
     val not:BinaryCompareVectorOperator get() = BinaryCompareVectorOperator(operation.not,leftOperand,rightOperand)
     override fun toString() = "BinaryCompareVectorOperator ($operation)"

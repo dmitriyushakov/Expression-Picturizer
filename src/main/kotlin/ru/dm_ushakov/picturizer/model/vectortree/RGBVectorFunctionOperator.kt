@@ -9,6 +9,10 @@ class RGBVectorFunctionOperator(val red:VectorOperand, val green:VectorOperand, 
         return RGBVectorFunctionOperator(red, green, blue)
     }
 
+    override fun validateOperandsTypes() {
+        error("Not allowed RGB call in final tree.")
+    }
+
     override val resultType get() = if (red.resultType == green.resultType && red.resultType == blue.resultType) red.resultType
         else ResultType.Undefined
 
