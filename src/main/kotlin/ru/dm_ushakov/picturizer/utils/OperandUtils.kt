@@ -1,6 +1,8 @@
 package ru.dm_ushakov.picturizer.utils
 
 import ru.dm_ushakov.picturizer.model.vectortree.*
+import ru.dm_ushakov.picturizer.visitor.vectortree.IdentityVectorOperatorVisitor
+import ru.dm_ushakov.picturizer.visitor.vectortree.VectorOperatorVisitor
 
 fun VectorOperand.isEqualTo(number:Double):Boolean {
     if (this is VectorValue) {
@@ -35,4 +37,5 @@ private fun collectOperands(operation: BinaryVectorOperation, op: BinaryVectorOp
 }
 
 val VectorOperand.identity get() = IdentityOperator(this)
+val VectorOperatorVisitor.identity get() = IdentityVectorOperatorVisitor(this)
 val VectorOperand.identityValue:VectorOperand get() = if (this is IdentityOperator) operand.identityValue else this

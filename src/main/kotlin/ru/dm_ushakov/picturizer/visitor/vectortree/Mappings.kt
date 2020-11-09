@@ -96,6 +96,23 @@ object Mappings {
         }
     }
 
+    val booleanToRealReducer = walker {
+        mapOperator = {
+            if ((it is BinaryVectorOperator && (
+                            it.operation == BinaryVectorOperation.Add ||
+                            it.operation == BinaryVectorOperation.Sub)) ||
+                            it is IdentityOperator) {
+                val operands = it.operands.map { op ->
+                    if (op.resultType == ResultType.Boolean) {
+                        TernaryVectorOperator(op,ScalarValue(1.0),ScalarValue(0.0))
+                    } else op
+                }
+
+                it.replaceOperands(operands)
+            } else it
+        }
+    }.identity
+
     val methodInvokeReducer = MethodInvokeReducer().apply {
         registerMethod("java/lang/Math","max","(DD)D")
         registerMethod("java/lang/Math","min","(DD)D")
@@ -139,9 +156,10 @@ object Mappings {
             wipeMultiplicationOnes,
             replaceLogicOperatorsForReal,
             BooleanMulReducer,
+            methodInvokeReducer,
+            booleanToRealReducer,
             reduceSimpleTernaryOperator,
             repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),
-            methodInvokeReducer,
             ValidationVisitor
     )
 }
