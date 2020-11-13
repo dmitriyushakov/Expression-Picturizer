@@ -17,11 +17,15 @@ object RendererDump {
     private const val IMG_HEIGHT_OFFSET = 5
     private const val ARGB_POINT = 10
     private const val ARGB_ARRAY = 1
+    private const val VAR_CONTEXT_OFFSET = 11
 
-    fun dump(className: String, red: (MethodVisitor) -> Unit, green: (MethodVisitor) -> Unit, blue: (MethodVisitor) -> Unit): ByteArray {
+    fun dump(className: String, fillContext:(MethodVariableContext) -> Unit, red: (MethodVariableContext,MethodVisitor) -> Unit, green: (MethodVariableContext,MethodVisitor) -> Unit, blue: (MethodVariableContext,MethodVisitor) -> Unit): ByteArray {
         val classWriter = ClassWriter(0).apply {
             visit(V11, ACC_PUBLIC or ACC_SUPER, className, null, "java/lang/Object", arrayOf("ru/dm_ushakov/picturizer/renderer/Renderer"))
             visitSource("formula", null)
+
+            val variableContext = MethodVariableContext(VAR_CONTEXT_OFFSET)
+            fillContext(variableContext)
 
             visitMethod(ACC_PUBLIC, "<init>", "()V", null, null).apply {
                 visitCode()
@@ -64,19 +68,19 @@ object RendererDump {
                 val endXCycle = Label()
                 visitJumpInsn(IF_ICMPGE, endXCycle) // if x >= width
 
-                red(methodVisitor)
+                red(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
                 visitInsn(IMUL)
                 visitInsn(D2I)
                 visitVarInsn(ISTORE, RED_VAL_POS) // red = ...
 
-                green(methodVisitor)
+                green(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
                 visitInsn(IMUL)
                 visitInsn(D2I)
                 visitVarInsn(ISTORE, GREEN_VAL_POS) // green = ...
 
-                blue(methodVisitor)
+                blue(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
                 visitInsn(IMUL)
                 visitInsn(D2I)
