@@ -1,6 +1,6 @@
 package ru.dm_ushakov.picturizer.model.vectortree
 
-enum class MethodArgumentVariableType {
+enum class MethodVariableType {
     X,
     Y,
     Angle,
