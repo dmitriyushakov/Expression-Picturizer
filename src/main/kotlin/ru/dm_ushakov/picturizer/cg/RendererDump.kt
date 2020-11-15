@@ -30,7 +30,7 @@ object RendererDump {
     }
 
     fun dump(className: String, fillContext:(MethodVariableContext) -> Unit, red: (MethodVariableContext,MethodVisitor) -> Unit, green: (MethodVariableContext,MethodVisitor) -> Unit, blue: (MethodVariableContext,MethodVisitor) -> Unit): ByteArray {
-        val classWriter = ClassWriter(0).apply {
+        val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS).apply {
             visit(V11, ACC_PUBLIC or ACC_SUPER, className, null, "java/lang/Object", arrayOf("ru/dm_ushakov/picturizer/renderer/Renderer"))
             visitSource("formula", null)
 
@@ -42,7 +42,7 @@ object RendererDump {
                 visitVarInsn(ALOAD, 0)
                 visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
                 visitInsn(RETURN)
-                visitMaxs(1, 1)
+                visitMaxs(0,0)
                 visitEnd()
             }
 
@@ -146,7 +146,7 @@ object RendererDump {
                 visitFrame(F_CHOP, 1, null, 0, null)
                 visitInsn(RETURN)
 
-                visitMaxs(3, 11)
+                visitMaxs(0,0)
                 visitEnd()
             }
             visitEnd()
