@@ -92,13 +92,29 @@ object RendererDump {
                         }
                         MethodVariableType.Radius -> {
                             visitVarInsn(ILOAD, X_POS)
+                            visitVarInsn(ILOAD, IMG_WIDTH)
+                            visitInsn(ICONST_2)
+                            visitInsn(IDIV)
+                            visitInsn(ISUB)
                             visitVarInsn(ILOAD, Y_POS)
+                            visitVarInsn(ILOAD, IMG_HEIGHT)
+                            visitInsn(ICONST_2)
+                            visitInsn(IDIV)
+                            visitInsn(ISUB)
                             visitMethodInsn(INVOKESTATIC, "ru/dm_ushakov/picturizer/renderer/RendererUtils", "getRadius", "(II)D", false)
                             visitVarInsn(ISTORE,methodVar.slot)
                         }
                         MethodVariableType.Angle -> {
                             visitVarInsn(ILOAD, X_POS)
+                            visitVarInsn(ILOAD, IMG_WIDTH)
+                            visitInsn(ICONST_2)
+                            visitInsn(IDIV)
+                            visitInsn(ISUB)
                             visitVarInsn(ILOAD, Y_POS)
+                            visitVarInsn(ILOAD, IMG_HEIGHT)
+                            visitInsn(ICONST_2)
+                            visitInsn(IDIV)
+                            visitInsn(ISUB)
                             visitMethodInsn(INVOKESTATIC, "ru/dm_ushakov/picturizer/renderer/RendererUtils", "getAngle", "(II)D", false)
                             visitVarInsn(ISTORE,methodVar.slot)
                         }
