@@ -21,7 +21,7 @@ class TreeBasedCG(val operand: VectorOperand):(MethodVariableContext, MethodVisi
                     visitLdcInsn(operand.value)
                 }
                 is MethodVariableAccess -> {
-                    visitVarInsn(ILOAD,context[operand.type].slot)
+                    visitVarInsn(DLOAD,context[operand.type].slot)
                 }
                 is MethodInvoke -> {
                     operand.operands.forEach { op ->
