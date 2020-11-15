@@ -4,5 +4,7 @@ enum class MethodVariableType {
     X,
     Y,
     Angle,
-    Radius
+    Radius,
+    Width,
+    Height
 }

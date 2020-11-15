@@ -118,6 +118,16 @@ object RendererDump {
                             visitMethodInsn(INVOKESTATIC, "ru/dm_ushakov/picturizer/renderer/RendererUtils", "getAngle", "(II)D", false)
                             visitVarInsn(DSTORE,methodVar.slot)
                         }
+                        MethodVariableType.Width -> {
+                            visitVarInsn(ILOAD, IMG_WIDTH)
+                            visitInsn(I2D)
+                            visitVarInsn(DSTORE,methodVar.slot)
+                        }
+                        MethodVariableType.Height -> {
+                            visitVarInsn(ILOAD, IMG_HEIGHT)
+                            visitInsn(I2D)
+                            visitVarInsn(DSTORE,methodVar.slot)
+                        }
                     }
                 }
 
