@@ -123,19 +123,19 @@ object RendererDump {
 
                 red(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
-                visitInsn(IMUL)
+                visitInsn(DMUL)
                 visitInsn(D2I)
                 visitVarInsn(ISTORE, RED_VAL_POS) // red = ...
 
                 green(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
-                visitInsn(IMUL)
+                visitInsn(DMUL)
                 visitInsn(D2I)
                 visitVarInsn(ISTORE, GREEN_VAL_POS) // green = ...
 
                 blue(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
-                visitInsn(IMUL)
+                visitInsn(DMUL)
                 visitInsn(D2I)
                 visitVarInsn(ISTORE, BLUE_VAL_POS) // blue = ...
 

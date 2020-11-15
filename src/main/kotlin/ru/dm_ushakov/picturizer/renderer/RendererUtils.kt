@@ -10,7 +10,7 @@ private fun clamp(value:Int, minValue:Int, maxValue:Int) = when {
     else -> value
 }
 
-fun getRgba(red:Int,green:Int,blue:Int) = 0xf000000 or
+fun getRgba(red:Int,green:Int,blue:Int) = (0xff shl 24) or
         (clamp(red,0,255) shl 16) or
         (clamp(green,0,255) shl 8) or
         (clamp(blue,0,255))
