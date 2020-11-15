@@ -116,6 +116,24 @@ object Mappings {
     val methodInvokeReducer = MethodInvokeReducer().apply {
         registerMethod("java/lang/Math","max","(DD)D")
         registerMethod("java/lang/Math","min","(DD)D")
+        registerMethod("java/lang/Math","sin","(D)D")
+        registerMethod("java/lang/Math","cos","(D)D")
+        registerMethod("java/lang/Math","tan","(D)D")
+        registerMethod("java/lang/Math","asin","(D)D")
+        registerMethod("java/lang/Math","acos","(D)D")
+        registerMethod("java/lang/Math","atan","(D)D")
+        registerMethod("java/lang/Math","atan2","(DD)D")
+        registerMethod("java/lang/Math","pow","(DD)D")
+        registerMethod("java/lang/Math","abs","(D)D")
+        registerMethod("java/lang/Math","sinh","(D)D")
+        registerMethod("java/lang/Math","cosh","(D)D")
+        registerMethod("java/lang/Math","tanh","(D)D")
+        registerMethod("java/lang/Math","sqrt","(D)D")
+        registerMethod("java/lang/Math","floor","(D)D")
+        registerMethod("java/lang/Math","ceil","(D)D")
+        registerMethod("java/lang/Math","log","(D)D")
+        registerMethod("java/lang/Math","log10","(D)D")
+        registerMethod("java/lang/Math","exp","(D)D")
     }
 
     val vectorVariableAccessReducer = VectorVariableAccessReducer().apply {
