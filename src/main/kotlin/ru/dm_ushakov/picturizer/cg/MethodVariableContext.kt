@@ -6,10 +6,11 @@ class MethodVariableContext (val variablesOffset:Int) {
     var usedSlots = 0
         private set
     private val variablesList:MutableList<MethodVariable> = mutableListOf()
-    val variables = variablesList.toList()
+    val variables get() = variablesList.toList()
 
     fun addVariable(type:MethodVariableType) {
         variablesList.add(MethodVariable(variablesOffset + usedSlots * 2,type))
+        usedSlots++
     }
 
     operator fun get(type:MethodVariableType) = variablesList.find { it.type == type } ?: error("Method variable not found! Type - $type")

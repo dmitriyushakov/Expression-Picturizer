@@ -4,6 +4,10 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes.*
+import ru.dm_ushakov.picturizer.model.vectortree.MethodVariableAccess
+import ru.dm_ushakov.picturizer.model.vectortree.MethodVariableType
+import ru.dm_ushakov.picturizer.model.vectortree.VectorOperand
+import ru.dm_ushakov.picturizer.model.vectortree.VectorOperator
 
 
 object RendererDump {
@@ -18,6 +22,12 @@ object RendererDump {
     private const val ARGB_POINT = 10
     private const val ARGB_ARRAY = 1
     private const val VAR_CONTEXT_OFFSET = 11
+
+    fun dump(className: String, redTree: VectorOperand, greenTree: VectorOperand, blueTree: VectorOperand): ByteArray {
+        val requiredMethodVariables = listOf(redTree,greenTree,blueTree).getRequiredMethodVariables()
+        val fillContext: (MethodVariableContext) -> Unit = { ctx -> requiredMethodVariables.forEach { v -> ctx.addVariable(v) } }
+        return dump(className,fillContext,TreeBasedCG(redTree),TreeBasedCG(greenTree),TreeBasedCG(blueTree))
+    }
 
     fun dump(className: String, fillContext:(MethodVariableContext) -> Unit, red: (MethodVariableContext,MethodVisitor) -> Unit, green: (MethodVariableContext,MethodVisitor) -> Unit, blue: (MethodVariableContext,MethodVisitor) -> Unit): ByteArray {
         val classWriter = ClassWriter(0).apply {
@@ -68,6 +78,33 @@ object RendererDump {
                 val endXCycle = Label()
                 visitJumpInsn(IF_ICMPGE, endXCycle) // if x >= width
 
+                variableContext.variables.forEach { methodVar ->
+                    when(methodVar.type) {
+                        MethodVariableType.X -> {
+                            visitVarInsn(ILOAD, X_POS)
+                            visitInsn(I2D)
+                            visitVarInsn(ISTORE,methodVar.slot)
+                        }
+                        MethodVariableType.Y -> {
+                            visitVarInsn(ILOAD, Y_POS)
+                            visitInsn(I2D)
+                            visitVarInsn(ISTORE,methodVar.slot)
+                        }
+                        MethodVariableType.Radius -> {
+                            visitVarInsn(ILOAD, X_POS)
+                            visitVarInsn(ILOAD, Y_POS)
+                            visitMethodInsn(INVOKESTATIC, "ru/dm_ushakov/picturizer/renderer/RendererUtils", "getRadius", "(II)D", false)
+                            visitVarInsn(ISTORE,methodVar.slot)
+                        }
+                        MethodVariableType.Angle -> {
+                            visitVarInsn(ILOAD, X_POS)
+                            visitVarInsn(ILOAD, Y_POS)
+                            visitMethodInsn(INVOKESTATIC, "ru/dm_ushakov/picturizer/renderer/RendererUtils", "getAngle", "(II)D", false)
+                            visitVarInsn(ISTORE,methodVar.slot)
+                        }
+                    }
+                }
+
                 red(variableContext,methodVisitor)
                 visitLdcInsn(255.0)
                 visitInsn(IMUL)
@@ -117,4 +154,21 @@ object RendererDump {
 
         return classWriter.toByteArray()
     }
+
+    fun VectorOperand.getRequiredMethodVariables():List<MethodVariableType> {
+        val result = mutableListOf<MethodVariableType>()
+        var operands = listOf(this)
+
+        while(operands.isNotEmpty()) {
+            operands.mapNotNull { it as? MethodVariableAccess }.map { it.type }.forEach {
+                if(it !in result) result.add(it)
+            }
+            operands = operands.mapNotNull { it as? VectorOperator }.flatMap { it.operands }
+        }
+
+        return result
+    }
+
+    fun List<VectorOperand>.getRequiredMethodVariables() =
+            flatMap { it.getRequiredMethodVariables() }.distinct()
 }
