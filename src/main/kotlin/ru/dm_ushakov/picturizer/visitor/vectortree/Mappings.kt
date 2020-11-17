@@ -145,6 +145,7 @@ object Mappings {
         addVariable("r",MethodVariableAccess(MethodVariableType.Radius))
         addVariable("w",MethodVariableAccess(MethodVariableType.Width))
         addVariable("h",MethodVariableAccess(MethodVariableType.Height))
+        addVariable("t",MethodVariableAccess(MethodVariableType.Time))
         addVariable("red",VectorBooleanValue(true,false,false))
         addVariable("green",VectorBooleanValue(false,true,false))
         addVariable("blue",VectorBooleanValue(false,false,true))

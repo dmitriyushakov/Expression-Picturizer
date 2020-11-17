@@ -6,5 +6,6 @@ enum class MethodVariableType {
     Angle,
     Radius,
     Width,
-    Height
+    Height,
+    Time
 }

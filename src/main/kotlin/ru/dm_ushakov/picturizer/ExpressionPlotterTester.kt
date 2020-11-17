@@ -23,7 +23,7 @@ fun main() {
         val loadedClass = classLoader.getClassFromBytecode(className,bytecode)
         val renderer = loadedClass.getConstructor().newInstance() as? Renderer ?: error("Returned object couldn't be casted to Renderer interface!")
         val imageBuf = IntArray(height*width)
-        renderer.render(imageBuf,width,height)
+        renderer.render(imageBuf,width,height,0)
         val img = BufferedImage(width, height,BufferedImage.TYPE_INT_ARGB)
         img.setRGB(0,0, width, height,imageBuf,0, width)
         val imageFileName = "image$iteration.png"

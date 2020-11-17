@@ -11,17 +11,18 @@ import ru.dm_ushakov.picturizer.model.vectortree.VectorOperator
 
 
 object RendererDump {
-    private const val RED_VAL_POS = 7
-    private const val GREEN_VAL_POS = 8
-    private const val BLUE_VAL_POS = 9
-    private const val X_POS = 6
-    private const val Y_POS = 4
+    private const val RED_VAL_POS = 9
+    private const val GREEN_VAL_POS = 10
+    private const val BLUE_VAL_POS = 11
+    private const val X_POS = 8
+    private const val Y_POS = 6
     private const val IMG_WIDTH = 2
     private const val IMG_HEIGHT = 3
-    private const val IMG_HEIGHT_OFFSET = 5
-    private const val ARGB_POINT = 10
+    private const val TIME_SPENT = 4
+    private const val IMG_HEIGHT_OFFSET = 7
+    private const val ARGB_POINT = 12
     private const val ARGB_ARRAY = 1
-    private const val VAR_CONTEXT_OFFSET = 11
+    private const val VAR_CONTEXT_OFFSET = 13
 
     fun dump(className: String, redTree: VectorOperand, greenTree: VectorOperand, blueTree: VectorOperand): ByteArray {
         val requiredMethodVariables = listOf(redTree,greenTree,blueTree).getRequiredMethodVariables()
@@ -46,7 +47,7 @@ object RendererDump {
                 visitEnd()
             }
 
-            visitMethod(ACC_PUBLIC, "render", "([III)V", null, null).apply {
+            visitMethod(ACC_PUBLIC, "render", "([IIIJ)V", null, null).apply {
                 val methodVisitor = this
 
                 visitAnnotableParameterCount(3, false)
@@ -128,6 +129,13 @@ object RendererDump {
                             visitInsn(I2D)
                             visitVarInsn(DSTORE,methodVar.slot)
                         }
+                        MethodVariableType.Time -> {
+                            visitVarInsn(LLOAD, TIME_SPENT)
+                            visitInsn(L2D)
+                            visitLdcInsn(1000.0)
+                            visitInsn(DDIV)
+                            visitVarInsn(DSTORE,methodVar.slot)
+                        }
                     }
                 }
 
@@ -175,6 +183,17 @@ object RendererDump {
                 visitMaxs(0,0)
                 visitEnd()
             }
+
+            visitMethod(ACC_PUBLIC, "isSupportTime", "()Z", null, null).apply {
+                visitCode()
+                val timeSupport = variableContext.variables.any { it.type == MethodVariableType.Time }
+                visitInsn(if(timeSupport) ICONST_1 else ICONST_0)
+                visitInsn(IRETURN)
+
+                visitMaxs(1,0)
+                visitEnd()
+            }
+
             visitEnd()
         }
 
