@@ -31,7 +31,7 @@ object RendererDump {
     }
 
     fun dump(className: String, fillContext:(MethodVariableContext) -> Unit, red: (MethodVariableContext,MethodVisitor) -> Unit, green: (MethodVariableContext,MethodVisitor) -> Unit, blue: (MethodVariableContext,MethodVisitor) -> Unit): ByteArray {
-        val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS).apply {
+        val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES).apply {
             visit(V11, ACC_PUBLIC or ACC_SUPER, className, null, "java/lang/Object", arrayOf("ru/dm_ushakov/picturizer/renderer/Renderer"))
             visitSource("formula", null)
 
@@ -53,6 +53,28 @@ object RendererDump {
                 visitAnnotableParameterCount(3, false)
                 visitParameterAnnotation(0, "Lorg/jetbrains/annotations/NotNull;", false).visitEnd()
                 visitCode()
+
+                variableContext.variables.forEach { methodVar ->
+                    when(methodVar.type) {
+                        MethodVariableType.Width -> {
+                            visitVarInsn(ILOAD, IMG_WIDTH)
+                            visitInsn(I2D)
+                            visitVarInsn(DSTORE,methodVar.slot)
+                        }
+                        MethodVariableType.Height -> {
+                            visitVarInsn(ILOAD, IMG_HEIGHT)
+                            visitInsn(I2D)
+                            visitVarInsn(DSTORE,methodVar.slot)
+                        }
+                        MethodVariableType.Time -> {
+                            visitVarInsn(LLOAD, TIME_SPENT)
+                            visitInsn(L2D)
+                            visitLdcInsn(1000.0)
+                            visitInsn(DDIV)
+                            visitVarInsn(DSTORE,methodVar.slot)
+                        }
+                    }
+                }
 
                 visitInsn(ICONST_0)
                 visitVarInsn(ISTORE, Y_POS) // y = 0
@@ -117,23 +139,6 @@ object RendererDump {
                             visitInsn(IDIV)
                             visitInsn(ISUB)
                             visitMethodInsn(INVOKESTATIC, "ru/dm_ushakov/picturizer/renderer/RendererUtils", "getAngle", "(II)D", false)
-                            visitVarInsn(DSTORE,methodVar.slot)
-                        }
-                        MethodVariableType.Width -> {
-                            visitVarInsn(ILOAD, IMG_WIDTH)
-                            visitInsn(I2D)
-                            visitVarInsn(DSTORE,methodVar.slot)
-                        }
-                        MethodVariableType.Height -> {
-                            visitVarInsn(ILOAD, IMG_HEIGHT)
-                            visitInsn(I2D)
-                            visitVarInsn(DSTORE,methodVar.slot)
-                        }
-                        MethodVariableType.Time -> {
-                            visitVarInsn(LLOAD, TIME_SPENT)
-                            visitInsn(L2D)
-                            visitLdcInsn(1000.0)
-                            visitInsn(DDIV)
                             visitVarInsn(DSTORE,methodVar.slot)
                         }
                     }
