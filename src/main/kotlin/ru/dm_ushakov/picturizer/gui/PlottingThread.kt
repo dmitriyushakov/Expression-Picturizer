@@ -48,7 +48,7 @@ class PlottingThread:Runnable {
         }
     }
 
-    val image get() = bufferedImage ?: error("Buffered image yet not loaded!")
+    val image get() = bufferedImage
     var repaintCallback:(() -> Unit)?=null
 
     override fun run() {
