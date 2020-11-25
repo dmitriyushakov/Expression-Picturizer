@@ -17,6 +17,7 @@ class MainWindow:JFrame("Expression Picturizer") {
     val upperPanel = JPanel()
     val expressionField = JTextField()
     val renderButton = JButton("Render")
+    val exportButton = JButton("Export")
     val imageShowArea = PicturePlot()
     init {
         contentPane = rootPanel
@@ -33,10 +34,12 @@ class MainWindow:JFrame("Expression Picturizer") {
         upperPanel.layout = BoxLayout(upperPanel,BoxLayout.X_AXIS)
         upperPanel.add(expressionField)
         upperPanel.add(renderButton)
+        upperPanel.add(exportButton)
         upperPanel.maximumSize = Dimension(Int.MAX_VALUE,30)
         rootPanel.add(imageShowArea)
 
         renderButton.addActionListener { renderPressed() }
+        exportButton.addActionListener { exportPressed() }
 
         defaultCloseOperation = EXIT_ON_CLOSE
         minimumSize = Dimension(400,300)
@@ -55,6 +58,33 @@ class MainWindow:JFrame("Expression Picturizer") {
             th.printStackTrace(PrintWriter(sw))
             imageShowArea.renderer = null
             imageShowArea.message = sw.toString()
+            throw th
+        }
+    }
+
+    private fun exportPressed() {
+        try {
+            val renderer = getRenderer(expressionField.text)
+            val dialog = ExportImageDialog(this, renderer)
+            dialog.isVisible = true
+        } catch(compilationException:ExpressionCompilationException) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    compilationException.friendlyMessage,
+                    "Compilation error",
+                    JOptionPane.ERROR_MESSAGE
+            )
+        } catch (th:Throwable) {
+            val sw = StringWriter()
+            th.printStackTrace(PrintWriter(sw))
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    sw.toString(),
+                    "Image export error",
+                    JOptionPane.ERROR_MESSAGE
+            )
+
             throw th
         }
     }
