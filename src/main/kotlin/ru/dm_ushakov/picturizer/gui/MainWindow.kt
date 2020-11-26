@@ -7,9 +7,11 @@ import ru.dm_ushakov.picturizer.renderer.Renderer
 import java.awt.Dimension
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
+import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 import javax.swing.*
+import javax.swing.filechooser.FileNameExtensionFilter
 
 class MainWindow:JFrame("Expression Picturizer") {
     private var exprClassNum = 0
@@ -18,6 +20,7 @@ class MainWindow:JFrame("Expression Picturizer") {
     val expressionField = JTextField()
     val renderButton = JButton("Render")
     val exportButton = JButton("Export")
+    val exportClassButton = JButton("Save class file")
     val imageShowArea = PicturePlot()
     init {
         contentPane = rootPanel
@@ -35,11 +38,13 @@ class MainWindow:JFrame("Expression Picturizer") {
         upperPanel.add(expressionField)
         upperPanel.add(renderButton)
         upperPanel.add(exportButton)
+        upperPanel.add(exportClassButton)
         upperPanel.maximumSize = Dimension(Int.MAX_VALUE,30)
         rootPanel.add(imageShowArea)
 
         renderButton.addActionListener { renderPressed() }
         exportButton.addActionListener { exportPressed() }
+        exportClassButton.addActionListener { exportClassPressed() }
 
         defaultCloseOperation = EXIT_ON_CLOSE
         minimumSize = Dimension(400,300)
@@ -86,6 +91,48 @@ class MainWindow:JFrame("Expression Picturizer") {
             )
 
             throw th
+        }
+    }
+
+    private fun exportClassPressed() {
+        val fileChooser = JFileChooser()
+        val classFileFilter = FileNameExtensionFilter("Class file", "class")
+        fileChooser.fileFilter = classFileFilter
+
+        val returnValue = fileChooser.showSaveDialog(this)
+        if(returnValue == JFileChooser.APPROVE_OPTION) {
+            try {
+                val fileName = fileChooser.selectedFile.path
+                        .let { if(it.endsWith(".class")) it else "$it.class" }
+                val className = fileName
+                        .let { if(it.indexOf('/') != -1) it.substring(it.lastIndexOf('/') + 1) else it }
+                        .let { if(it.indexOf('\\') != -1) it.substring(it.lastIndexOf('\\') + 1) else it }
+                        .let { it.substring(0,it.indexOf('.')) }
+                val expression = expressionField.text
+                val bytecode = compileExpression(expression, className)
+                val outStream = FileOutputStream(fileName)
+                outStream.write(bytecode)
+                outStream.close()
+            } catch (ex:ExpressionCompilationException) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        ex.friendlyMessage,
+                        "Compilation error",
+                        JOptionPane.ERROR_MESSAGE
+                )
+            } catch (th:Throwable) {
+                val sw = StringWriter()
+                th.printStackTrace(PrintWriter(sw))
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        sw.toString(),
+                        "Class export error",
+                        JOptionPane.ERROR_MESSAGE
+                )
+
+                throw th
+            }
         }
     }
 
