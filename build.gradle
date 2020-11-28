@@ -1,14 +1,25 @@
 plugins {
     id 'java'
     id 'antlr'
+    id 'application'
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'com.github.johnrengelman.shadow' version "6.1.0"
 }
 
 group 'ru.dm_ushakov.picturizer'
 version '0.1'
 
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClassName = 'ru.dm_ushakov.picturizer.UIMainKt'
 }
 
 dependencies {
@@ -19,6 +30,8 @@ dependencies {
     antlr "org.antlr:antlr4:4.8"
     compile "org.antlr:antlr4-runtime:4.8"
 }
+
+compileKotlin.dependsOn(generateGrammarSource)
 
 generateGrammarSource {
     maxHeapSize = "64m"

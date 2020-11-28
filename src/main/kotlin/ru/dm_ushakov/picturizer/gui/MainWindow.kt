@@ -139,7 +139,7 @@ class MainWindow:JFrame("Expression Picturizer") {
     private fun getRenderer(expression:String):Renderer {
         val className = "CompiledExpression$exprClassNum"
         val bytecode = compileExpression(expression,className)
-        val classLoader = ByteClassLoader("Bytecode class loader", ClassLoader.getSystemClassLoader())
+        val classLoader = ByteClassLoader(ClassLoader.getSystemClassLoader())
         val loadedClass = classLoader.getClassFromBytecode(className,bytecode)
         val renderer = loadedClass.getConstructor().newInstance() as? Renderer ?: error("Returned object couldn't be casted to Renderer interface!")
         exprClassNum++
