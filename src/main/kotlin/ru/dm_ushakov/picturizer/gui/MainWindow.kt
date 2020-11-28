@@ -17,15 +17,13 @@ class MainWindow:JFrame("Expression Picturizer") {
     private var exprClassNum = 0
     val rootPanel = JPanel()
     val upperPanel = JPanel()
+    val toolPanel = JPanel()
     val expressionField = JTextField()
     val renderButton = JButton("Render")
     val exportButton = JButton("Export")
     val exportClassButton = JButton("Save class file")
     val imageShowArea = PicturePlot()
     init {
-        contentPane = rootPanel
-        rootPanel.layout = BoxLayout(rootPanel,BoxLayout.Y_AXIS)
-        rootPanel.add(upperPanel)
         expressionField.addKeyListener(object:KeyListener{
             override fun keyTyped(ev: KeyEvent) {}
             override fun keyReleased(ev: KeyEvent) {}
@@ -34,13 +32,28 @@ class MainWindow:JFrame("Expression Picturizer") {
                 if (ev.keyCode == 10) renderPressed()
             }
         })
-        upperPanel.layout = BoxLayout(upperPanel,BoxLayout.X_AXIS)
-        upperPanel.add(expressionField)
-        upperPanel.add(renderButton)
-        upperPanel.add(exportButton)
-        upperPanel.add(exportClassButton)
-        upperPanel.maximumSize = Dimension(Int.MAX_VALUE,30)
-        rootPanel.add(imageShowArea)
+
+        upperPanel.apply {
+            layout = BoxLayout(this, BoxLayout.X_AXIS)
+            add(expressionField)
+            add(renderButton)
+            maximumSize = Dimension(Int.MAX_VALUE, 30)
+        }
+
+        toolPanel.apply {
+            layout = BoxLayout(this, BoxLayout.X_AXIS)
+            add(exportButton)
+            add(exportClassButton)
+            maximumSize = Dimension(Int.MAX_VALUE, 30)
+        }
+
+
+        contentPane = rootPanel.apply {
+            layout = BoxLayout(rootPanel, BoxLayout.Y_AXIS)
+            add(upperPanel)
+            add(toolPanel)
+            add(imageShowArea)
+        }
 
         renderButton.addActionListener { renderPressed() }
         exportButton.addActionListener { exportPressed() }
