@@ -2,6 +2,7 @@ package ru.dm_ushakov.picturizer.gui
 
 import ru.dm_ushakov.picturizer.ByteClassLoader
 import ru.dm_ushakov.picturizer.cg.compileExpression
+import ru.dm_ushakov.picturizer.cg.explainExpression
 import ru.dm_ushakov.picturizer.exceptions.ExpressionCompilationException
 import ru.dm_ushakov.picturizer.renderer.Renderer
 import java.awt.Dimension
@@ -22,6 +23,7 @@ class MainWindow:JFrame("Expression Picturizer") {
     val renderButton = JButton("Render")
     val exportButton = JButton("Export")
     val exportClassButton = JButton("Save class file")
+    val explainButton = JButton("Explain")
     val imageShowArea = PicturePlot()
     init {
         expressionField.addKeyListener(object:KeyListener{
@@ -44,6 +46,7 @@ class MainWindow:JFrame("Expression Picturizer") {
             layout = BoxLayout(this, BoxLayout.X_AXIS)
             add(exportButton)
             add(exportClassButton)
+            add(explainButton)
             maximumSize = Dimension(Int.MAX_VALUE, 30)
         }
 
@@ -58,6 +61,7 @@ class MainWindow:JFrame("Expression Picturizer") {
         renderButton.addActionListener { renderPressed() }
         exportButton.addActionListener { exportPressed() }
         exportClassButton.addActionListener { exportClassPressed() }
+        explainButton.addActionListener { explainPressed() }
 
         defaultCloseOperation = EXIT_ON_CLOSE
         minimumSize = Dimension(400,300)
@@ -81,29 +85,10 @@ class MainWindow:JFrame("Expression Picturizer") {
     }
 
     private fun exportPressed() {
-        try {
+        tryWithErrorDialogs {
             val renderer = getRenderer(expressionField.text)
             val dialog = ExportImageDialog(this, renderer)
             dialog.isVisible = true
-        } catch(compilationException:ExpressionCompilationException) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    compilationException.friendlyMessage,
-                    "Compilation error",
-                    JOptionPane.ERROR_MESSAGE
-            )
-        } catch (th:Throwable) {
-            val sw = StringWriter()
-            th.printStackTrace(PrintWriter(sw))
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    sw.toString(),
-                    "Image export error",
-                    JOptionPane.ERROR_MESSAGE
-            )
-
-            throw th
         }
     }
 
@@ -114,7 +99,7 @@ class MainWindow:JFrame("Expression Picturizer") {
 
         val returnValue = fileChooser.showSaveDialog(this)
         if(returnValue == JFileChooser.APPROVE_OPTION) {
-            try {
+            tryWithErrorDialogs {
                 val fileName = fileChooser.selectedFile.path
                         .let { if(it.endsWith(".class")) it else "$it.class" }
                 val className = fileName
@@ -126,26 +111,42 @@ class MainWindow:JFrame("Expression Picturizer") {
                 val outStream = FileOutputStream(fileName)
                 outStream.write(bytecode)
                 outStream.close()
-            } catch (ex:ExpressionCompilationException) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        ex.friendlyMessage,
-                        "Compilation error",
-                        JOptionPane.ERROR_MESSAGE
-                )
-            } catch (th:Throwable) {
-                val sw = StringWriter()
-                th.printStackTrace(PrintWriter(sw))
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        sw.toString(),
-                        "Class export error",
-                        JOptionPane.ERROR_MESSAGE
-                )
-
-                throw th
             }
+        }
+    }
+
+    private fun explainPressed() {
+        tryWithErrorDialogs {
+            val expression = expressionField.text
+            val className = "CompiledExpression"
+            val explainModel = explainExpression(expression, className)
+            val explainWindow = ExplainWindow(explainModel, this)
+            explainWindow.isVisible = true
+        }
+    }
+
+    private fun tryWithErrorDialogs(logic:() -> Unit) {
+        try {
+            logic()
+        } catch (ex:ExpressionCompilationException) {
+            JOptionPane.showMessageDialog(
+                this,
+                ex.friendlyMessage,
+                "Compilation error",
+                JOptionPane.ERROR_MESSAGE
+            )
+        } catch (th:Throwable) {
+            val sw = StringWriter()
+            th.printStackTrace(PrintWriter(sw))
+
+            JOptionPane.showMessageDialog(
+                this,
+                sw.toString(),
+                "Operation error",
+                JOptionPane.ERROR_MESSAGE
+            )
+
+            throw th
         }
     }
 
