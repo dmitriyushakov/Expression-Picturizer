@@ -1,5 +1,6 @@
 package ru.dm_ushakov.picturizer.visitor.vectortree
 
+import ru.dm_ushakov.picturizer.extensions.ExtensionsRegistry
 import ru.dm_ushakov.picturizer.model.vectortree.*
 import ru.dm_ushakov.picturizer.utils.*
 
@@ -178,6 +179,7 @@ object Mappings {
             replaceLogicOperatorsForReal,
             BooleanMulReducer,
             methodInvokeReducer,
+            ExtensionsRegistry.reducer,
             booleanToRealReducer,
             reduceSimpleTernaryOperator,
             repeatableOpVisitorChain(DivReducer, MulReducer, SubAddReducer),

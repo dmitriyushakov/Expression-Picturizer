@@ -24,7 +24,9 @@ class MainWindow:JFrame("Expression Picturizer") {
     val exportButton = JButton("Export")
     val exportClassButton = JButton("Save class file")
     val explainButton = JButton("Explain")
+    val extensionsButton = JButton("Extensions")
     val imageShowArea = PicturePlot()
+
     init {
         expressionField.addKeyListener(object:KeyListener{
             override fun keyTyped(ev: KeyEvent) {}
@@ -47,6 +49,7 @@ class MainWindow:JFrame("Expression Picturizer") {
             add(exportButton)
             add(exportClassButton)
             add(explainButton)
+            add(extensionsButton)
             maximumSize = Dimension(Int.MAX_VALUE, 30)
         }
 
@@ -62,6 +65,7 @@ class MainWindow:JFrame("Expression Picturizer") {
         exportButton.addActionListener { exportPressed() }
         exportClassButton.addActionListener { exportClassPressed() }
         explainButton.addActionListener { explainPressed() }
+        extensionsButton.addActionListener { extensionsPressed() }
 
         defaultCloseOperation = EXIT_ON_CLOSE
         minimumSize = Dimension(400,300)
@@ -125,30 +129,14 @@ class MainWindow:JFrame("Expression Picturizer") {
         }
     }
 
-    private fun tryWithErrorDialogs(logic:() -> Unit) {
-        try {
-            logic()
-        } catch (ex:ExpressionCompilationException) {
-            JOptionPane.showMessageDialog(
-                this,
-                ex.friendlyMessage,
-                "Compilation error",
-                JOptionPane.ERROR_MESSAGE
-            )
-        } catch (th:Throwable) {
-            val sw = StringWriter()
-            th.printStackTrace(PrintWriter(sw))
-
-            JOptionPane.showMessageDialog(
-                this,
-                sw.toString(),
-                "Operation error",
-                JOptionPane.ERROR_MESSAGE
-            )
-
-            throw th
+    private fun extensionsPressed() {
+        tryWithErrorDialogs {
+            val extensionsWindow = ExtensionsWindow(this)
+            extensionsWindow.isVisible = true
         }
     }
+
+    private fun tryWithErrorDialogs(logic:() -> Unit) = tryWithErrorDialogs(this,logic)
 
     private fun getRenderer(expression:String):Renderer {
         val className = "CompiledExpression$exprClassNum"
