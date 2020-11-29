@@ -102,6 +102,7 @@ object Mappings {
             if ((it is BinaryVectorOperator && (
                             it.operation == BinaryVectorOperation.Add ||
                             it.operation == BinaryVectorOperation.Sub)) ||
+                            it is MethodInvoke ||
                             it is IdentityOperator) {
                 val operands = it.operands.map { op ->
                     if (op.resultType == ResultType.Boolean) {
