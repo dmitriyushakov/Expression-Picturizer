@@ -3,12 +3,8 @@ package ru.dm_ushakov.picturizer.visitor.vectortree
 import ru.dm_ushakov.picturizer.model.vectortree.VectorOperand
 import ru.dm_ushakov.picturizer.model.vectortree.VectorOperator
 import ru.dm_ushakov.picturizer.utils.countArgsInDescriptor
-import org.objectweb.asm.Type.getType
 import ru.dm_ushakov.picturizer.model.vectortree.MethodInvoke
 import ru.dm_ushakov.picturizer.model.vectortree.VectorFunctionCall
-import kotlin.reflect.KFunction
-import kotlin.reflect.jvm.javaMethod
-
 
 class MethodInvokeReducer:AbstractVectorOperatorVisitor() {
     class MethodInformation(val aliasName:String,val owner:String,val name:String,val descriptor:String,val operandsCount:Int)
