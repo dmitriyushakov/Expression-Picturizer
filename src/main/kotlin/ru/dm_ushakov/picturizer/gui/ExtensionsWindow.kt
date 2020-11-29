@@ -5,6 +5,7 @@ import java.awt.Frame
 
 import ru.dm_ushakov.picturizer.extensions.ExtensionsRegistry
 import java.awt.Dimension
+import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -14,6 +15,8 @@ class ExtensionsWindow(owner:Frame):JDialog(owner,"Extensions list") {
     private val methods = JTextArea()
     private val addButton = JButton("Add")
     private val removeButton = JButton("Remove")
+
+    var closeHandler:(() -> Unit)? = null
 
     init {
         minimumSize = Dimension(300,400)
@@ -70,5 +73,10 @@ class ExtensionsWindow(owner:Frame):JDialog(owner,"Extensions list") {
     private fun refreshLists() {
         extensionsList.setListData(ExtensionsRegistry.extensionsList.toTypedArray())
         methods.text = ExtensionsRegistry.extensionMethods.joinToString("\n")
+    }
+
+    override fun processWindowEvent(e: WindowEvent) {
+        if (e.id == WindowEvent.WINDOW_CLOSING) closeHandler?.invoke()
+        super.processWindowEvent(e)
     }
 }

@@ -4,6 +4,7 @@ import ru.dm_ushakov.picturizer.ByteClassLoader
 import ru.dm_ushakov.picturizer.cg.compileExpression
 import ru.dm_ushakov.picturizer.cg.explainExpression
 import ru.dm_ushakov.picturizer.exceptions.ExpressionCompilationException
+import ru.dm_ushakov.picturizer.extensions.ExtensionsRegistry
 import ru.dm_ushakov.picturizer.renderer.Renderer
 import java.awt.Dimension
 import java.awt.event.KeyEvent
@@ -133,6 +134,10 @@ class MainWindow:JFrame("Expression Picturizer") {
         tryWithErrorDialogs {
             val extensionsWindow = ExtensionsWindow(this)
             extensionsWindow.isVisible = true
+            extensionsWindow.closeHandler = {
+                val extensionsCount = ExtensionsRegistry.extensionsList.size
+                extensionsButton.text = "Extensions".let { if (extensionsCount == 0) it else "$it ($extensionsCount)" }
+            }
         }
     }
 
