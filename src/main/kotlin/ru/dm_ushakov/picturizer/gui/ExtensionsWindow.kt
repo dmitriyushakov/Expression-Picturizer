@@ -1,10 +1,9 @@
 package ru.dm_ushakov.picturizer.gui
 
 import ru.dm_ushakov.picturizer.extensions.ExtensionClass
-import java.awt.Frame
 
 import ru.dm_ushakov.picturizer.extensions.ExtensionsRegistry
-import java.awt.Dimension
+import java.awt.*
 import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -20,25 +19,38 @@ class ExtensionsWindow(owner:Frame):JDialog(owner,"Extensions list") {
 
     init {
         minimumSize = Dimension(300,400)
-        mainPane.layout = BoxLayout(mainPane,BoxLayout.Y_AXIS)
+        mainPane.layout = BorderLayout()
         contentPane = mainPane
 
-        val extensionsListScroll = JScrollPane(extensionsList)
-        mainPane.add(JLabel("Extension classes:"))
-        mainPane.add(extensionsListScroll)
+        val listsPane = JPanel().apply {
+            layout = BoxLayout(this,BoxLayout.Y_AXIS)
+            alignmentX = Component.LEFT_ALIGNMENT
+            border = BorderFactory.createEmptyBorder(8,8,0,8)
 
-        methods.isEditable = false
-        methods.text = ExtensionsRegistry.extensionMethods.joinToString("\n")
+            val extensionsListScroll = JScrollPane(extensionsList)
+            add(JLabel("Extension classes:"))
+            add(extensionsListScroll)
 
-        val methodsScroll = JScrollPane(methods)
-        mainPane.add(JLabel("Discovered methods:"))
-        mainPane.add(methodsScroll)
+            methods.isEditable = false
+            methods.text = ExtensionsRegistry.extensionMethods.joinToString("\n")
 
-        val buttonsPane = JPanel()
-        buttonsPane.layout = BoxLayout(buttonsPane,BoxLayout.X_AXIS)
-        buttonsPane.add(addButton)
-        buttonsPane.add(removeButton)
-        mainPane.add(buttonsPane)
+            val methodsScroll = JScrollPane(methods)
+            add(JLabel("Discovered methods:"))
+            add(methodsScroll)
+        }
+
+        mainPane.add(listsPane,BorderLayout.CENTER)
+
+        val buttonsPane = JPanel().apply {
+            layout = BoxLayout(this, BoxLayout.LINE_AXIS)
+            alignmentX = Component.RIGHT_ALIGNMENT
+            border = BorderFactory.createEmptyBorder(4,8,8,8)
+            add(Box.createHorizontalGlue())
+            add(addButton)
+            add(Box.createRigidArea(Dimension(5,0)))
+            add(removeButton)
+        }
+        mainPane.add(buttonsPane,BorderLayout.PAGE_END)
 
         addButton.addActionListener { addButtonPressed() }
         removeButton.addActionListener { removeButtonPressed() }

@@ -28,6 +28,7 @@ class ExportImageDialog(owner:Frame,private val renderer:Renderer):JDialog(owner
         preferredSize = fixedSize
         minimumSize = fixedSize
         maximumSize = fixedSize
+        isResizable = false
 
         val rootPane = pane {
             border = EmptyBorder(7,7,7,7)
@@ -55,6 +56,7 @@ class ExportImageDialog(owner:Frame,private val renderer:Renderer):JDialog(owner
                 layout = BoxLayout(this,BoxLayout.X_AXIS)
 
                 add(saveButton)
+                add(Box.createRigidArea(Dimension(5,0)))
                 add(cancelButton)
             }
 

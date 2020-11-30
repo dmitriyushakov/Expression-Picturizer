@@ -47,6 +47,7 @@ class MainWindow:JFrame("Expression Picturizer") {
 
         toolPanel.apply {
             layout = BoxLayout(this, BoxLayout.X_AXIS)
+            add(Box.createHorizontalGlue())
             add(exportButton)
             add(exportClassButton)
             add(explainButton)

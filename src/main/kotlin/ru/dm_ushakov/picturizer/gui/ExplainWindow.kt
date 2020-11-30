@@ -39,6 +39,7 @@ class ExplainWindow(model:ExplainModel, owner: Frame):JDialog(owner, "Explain ex
         tabbedPane.addTab("Decompiled", decompiledCodeScrollPane)
 
         contentPane = tabbedPane
+        tabbedPane.border = BorderFactory.createEmptyBorder(8,8,8,8)
         minimumSize = Dimension(400,400)
     }
 
