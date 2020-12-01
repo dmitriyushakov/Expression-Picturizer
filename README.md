@@ -112,16 +112,21 @@ Program have some count of registered functions (look [java.lang.Math javadoc](h
 ![Example 1](doc/img/example1.png)
 
 `(x+y)/(w+h)`
+
 ![Example 2](doc/img/example2.png)
 
 `red * (x+y)/(w+h)`
+
 ![Example 3](doc/img/example3.png)
 
 `(sin(r/20)+1)/2`
+
 ![Example 4](doc/img/example4.png)
 
 `(sin(r/20 + rgb(2,4,6))+1)/2`
+
 ![Example 5](doc/img/example5.png)
 
 `(sin(r/20 + (x<y*w/h ? 4 : rgb(2,4,6)))+1)/2`
+
 ![Example 6](doc/img/example6.png)
