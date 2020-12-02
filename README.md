@@ -3,6 +3,10 @@ This program allow to render images using math expressions. It generate bytecode
 
 ![Main Window](doc/img/main-window.png)
 
+## Download
+
+You can download self executable JAR file with all dependencies inside from [GitHub releases](https://github.com/dmitriyushakov/Expression-Picturizer/releases/) page. It compatible with Java JRE 1.8 or newer.
+
 ## Build
 
 You can build this project into self executable JAR with all dependencies inside by few commands.
@@ -130,3 +134,38 @@ Program have some count of registered functions (look [java.lang.Math javadoc](h
 `(sin(r/20 + (x<y*w/h ? 4 : rgb(2,4,6)))+1)/2`
 
 ![Example 6](doc/img/example6.png)
+
+## Dialogs
+
+- **Export** - open dialog for exporting rastered image. Need to input height, width and filename.
+- **Save class file** - open save file dialog for export compiled class.
+- **Explain** - shows information about compiled expression. Consist of 3 tabs:
+  - **Operands trees** - shows original parsed tree (after conversion from ANTLR AST) and operands trees for each red, green, blue channel after all transformations.
+  - **Bytecode** - shows bytecode presentation output from ASM Textifier.
+  - **Decompiled** - shows compiled class presentation using JD-Core decompiler.
+- **Extensions** - shows list of loaded extensions and methods which could be used from it.
+
+## Extensions
+
+You can add your own Java code for add functions to this Program. Extension it is Java class with methods which can be registered as functions. Extensions should to satisfy these requirements:
+
+- Extension should be written in public class.
+- Methods should have `public` and `static` access modifiers. Expression invoke your extension method using `INVOKESTATIC` instruction.
+- Methods should receive only `double` values and can return only `double` values. Methods with another types will not be registered.
+- Please compile class compatible with Java 1.8 if you will distribute compiled extensions. Program is compatible with this version of Java but it can to load class which built on latest version of Java on older JRE.
+
+Example of extension code:
+```java
+public class GradientExtension {
+        public static double grad(double pos,double start,double end) {
+                if (pos < 0) pos = 0;
+                else if (pos > 1) pos = 1;
+
+                return start * (1.0 - pos) + end * pos;
+        }
+
+        public static double igrad(double pos,double start,double end) {
+                return grad(1.0 - pos,start,end);
+        }
+}
+```
